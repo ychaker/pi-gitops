@@ -1,0 +1,8 @@
+resources:
+  - ./flux-system
+  - ./apps/home-assistant
+  - ./apps/prometheus
+  - ./apps/ubiquity-unifi-agent
+  - ../../infrastructure/ingress
+  - ../../infrastructure/monitoring
+  - ../../infrastructure/storage

@@ -1,0 +1,19 @@
+# Traefik ingress controller configuration
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: traefik
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: traefik
+  namespace: traefik
+spec:
+  chart:
+    repository: "https://helm.traefik.io/traefik"
+    name: traefik
+    version: "10.12.1"
+  values:
+    additionalArguments:
+      - "--api.insecure=true"

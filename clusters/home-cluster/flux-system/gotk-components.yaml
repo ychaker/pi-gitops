@@ -1,0 +1,13 @@
+# Flux system configuration
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flux-system
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flux-config
+  namespace: flux-system
+data:
+  gitops-repo: "https://github.com/ychaker/pi-gitops"
