@@ -17,7 +17,6 @@ spec:
     persistence:
       enabled: true
       existingClaim: nfs-pvc
-      size: 2Gi   # Optional, not used if using an existingClaim
     ingress:
       enabled: true
       className: traefik
