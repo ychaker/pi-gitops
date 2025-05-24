@@ -17,11 +17,10 @@ spec:
     serviceWeb:
       type: ClusterIP
     persistence:
-      enabled: true
       existingClaim: nfs-pvc
     ingress:
       enabled: true
-      className: traefik
       hosts:
-        - host: pihole.local
-          paths: ["/"]
+        - host: "pihole.local"
+          paths:
+            - /
