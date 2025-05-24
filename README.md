@@ -159,7 +159,13 @@ Copy and paste these values when prompted by setup_pi.sh!
 You can use the provided `setup_pi.sh` script to automate initial Pi configuration (hostname, static IP, SSH, updates).
 
 **Usage:**
-1. Copy `setup_pi.sh` to the Pi (via SCP or USB).
+
+1. Download the setup script:
+   ```sh
+   mkdir -p cluster
+   cd cluster
+   curl -O https://raw.githubusercontent.com/ychaker/pi-gitops/main/setup_pi.sh
+   ```
 2. Run:
    ```sh
    chmod +x setup_pi.sh
