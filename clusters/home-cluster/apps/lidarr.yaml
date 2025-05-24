@@ -18,7 +18,7 @@ spec:
       existingClaim: nfs-pvc
     ingress:
       enabled: true
-      className: traefik
       hosts:
-        - host: lidarr.local
-          paths: ["/"]
+        - host: "lidarr.local"
+          paths:
+            - /

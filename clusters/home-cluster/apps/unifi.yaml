@@ -19,7 +19,7 @@ spec:
       existingClaim: nfs-pvc
     ingress:
       enabled: true
-      className: traefik
       hosts:
-        - host: unifi.local
-          paths: ["/"]
+        - host: "unifi.local"
+          paths:
+            - /
