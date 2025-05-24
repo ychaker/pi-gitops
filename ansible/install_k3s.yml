@@ -1,8 +1,17 @@
 ---
 - name: Install k3s on Raspberry Pi
   hosts: all
-  become: true
+  become: yes
   tasks:
+    - import_tasks: add-cgroup-iptables.yml
+
     - name: Install k3s
-      shell: |
-        curl -sfL https://get.k3s.io | sh -
+      shell: curl -sfL https://get.k3s.io | sh -
+
+  handlers:
+    - name: Reboot Pi
+      become: yes
+      reboot:
+        msg: "Rebooting Pi after enabling memory cgroups"
+        pre_reboot_delay: 5
+        reboot_timeout: 300

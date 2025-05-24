@@ -1,0 +1,24 @@
+# Ensure memory cgroup params and iptables are present on all Raspberry PIs
+
+- name: Ensure cgroup_memory=1 is present in /boot/cmdline.txt
+  become: yes
+  ansible.builtin.shell: |
+    if ! grep -q 'cgroup_memory=1' /boot/cmdline.txt; then
+      sed -i -e 's/$/ cgroup_memory=1/' /boot/cmdline.txt
+    fi
+  notify: Reboot Pi
+
+- name: Ensure cgroup_enable=memory is present in /boot/cmdline.txt
+  become: yes
+  ansible.builtin.shell: |
+    if ! grep -q 'cgroup_enable=memory' /boot/cmdline.txt; then
+      sed -i -e 's/$/ cgroup_enable=memory/' /boot/cmdline.txt
+    fi
+  notify: Reboot Pi
+
+- name: Ensure iptables is installed
+  become: yes
+  ansible.builtin.apt:
+    name: iptables
+    state: present
+    update_cache: yes
