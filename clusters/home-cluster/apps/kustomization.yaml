@@ -1,0 +1,7 @@
+resources:
+  - home-assistant.yaml
+  - lidarr.yaml
+  - pihole.yaml
+  - prowlarr.yaml
+  - radarr.yaml
+  - unifi.yaml

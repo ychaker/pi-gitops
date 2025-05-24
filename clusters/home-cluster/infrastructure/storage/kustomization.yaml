@@ -1,0 +1,3 @@
+resources:
+  - ./nfs-pv.yaml
+  - ./nfs-pvc.yaml
