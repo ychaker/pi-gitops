@@ -244,13 +244,20 @@ Edit `clusters/home-cluster/storage/nfs-pv.yaml` and `nfs-pvc.yaml` with your NA
 Apply storage resources:
 
 ```sh
-kubectl apply -k clusters/home-cluster/storage
+kubectl apply -k clusters/home-cluster/infrastructure/storage
 ```
 
 ### 6. Deploy Applications
 
 - Edit or add HelmRelease/YAML manifests to `clusters/home-cluster/apps/` for services you want.
 - Commit and push. Flux will deploy automatically.
+
+### 7. Check status:
+
+```sh
+kubectl get helmrepositories -n flux-system
+kubectl get helmreleases --all-namespaces
+```
 
 ---
 
