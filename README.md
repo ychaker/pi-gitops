@@ -209,6 +209,12 @@ Run the playbook to install k3s and dependencies on all Pis:
 ansible-playbook -i ansible/inventory.ini ansible/install_k3s.yml
 ```
 
+To limit to a particular node:
+
+```sh
+ansible-playbook -i ansible/inventory.ini ansible/install_k3s.yml --limit pi2,pi4
+```
+
 ### 4. Bootstrap Flux
 
 Install Flux CLI ([docs](https://fluxcd.io/docs/installation/)):

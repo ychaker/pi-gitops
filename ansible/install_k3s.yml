@@ -1,13 +1,22 @@
 ---
-- name: Install k3s on Raspberry Pi
-  hosts: all
-  become: yes
+# -----------------------------------------------------------------------------
+# install_k3s.yml
+#
+# Installs k3s on a Raspberry Pi cluster with one server and multiple agents.
+# Uses add-cgroup-iptables.yml for prerequisites.
+#
+# Usage:
+#   ansible-playbook -i ansible/inventory.ini ansible/install_k3s.yml
+#
+# After completion, copy /etc/rancher/k3s/k3s.yaml from pi1, set 'server' to
+# your pi1 IP, and use it as your kubeconfig.
+# -----------------------------------------------------------------------------
+
+- name: Prepare all Pis for k3s
+  hosts: pis
+  become: true
   tasks:
     - import_tasks: add-cgroup-iptables.yml
-
-    - name: Install k3s
-      shell: curl -sfL https://get.k3s.io | sh -
-
   handlers:
     - name: Reboot Pi
       become: yes
@@ -15,3 +24,64 @@
         msg: "Rebooting Pi after enabling memory cgroups"
         pre_reboot_delay: 5
         reboot_timeout: 300
+
+- name: Wait for Pis to reboot and become reachable
+  hosts: pis
+  gather_facts: false
+  tasks:
+    - name: Wait for host to become reachable after reboot
+      wait_for_connection:
+        connect_timeout: 5
+        sleep: 5
+        delay: 10
+        timeout: 300
+
+- name: Install k3s server (pi1)
+  hosts: server
+  become: true
+  tasks:
+    - name: Install k3s server
+      shell: |
+        curl -sfL https://get.k3s.io | sh -
+      args:
+        creates: /etc/rancher/k3s/k3s.yaml
+
+    - name: Wait for k3s.yaml to exist
+      wait_for:
+        path: /etc/rancher/k3s/k3s.yaml
+        timeout: 60
+
+# -----------------------------------------------------------------------------
+# Gather token and IP from the server for agent join, even if only running against agents
+# -----------------------------------------------------------------------------
+- name: Gather k3s server token and IP for agents
+  hosts: agents
+  gather_facts: false
+  tasks:
+    # Always run this on the server host, even if we're targeting only agents
+    - name: Get k3s node token from the server
+      become: true
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: k3s_token
+      delegate_to: "{{ groups['server'][0] }}"
+      run_once: true
+
+    # Set facts for use in agent installation
+    - name: Set join token and server IP for agents
+      set_fact:
+        k3s_join_token: "{{ k3s_token.content | b64decode | trim }}"
+        k3s_server_ip: "{{ hostvars[groups['server'][0]].ansible_host }}"
+      run_once: true
+
+- name: Install k3s agents (pi2-pi6)
+  hosts: agents
+  become: true
+  # Use the facts set in the previous step
+  tasks:
+    - name: Install k3s agent
+      shell: |
+        # Use the join token and server IP gathered above
+        curl -sfL https://get.k3s.io | K3S_URL="https://{{ k3s_server_ip }}:6443" K3S_TOKEN="{{ k3s_join_token }}" sh -
+      args:
+        creates: /etc/rancher/k3s/k3s-agent.yaml
