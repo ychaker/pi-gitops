@@ -1,4 +1,5 @@
 resources:
+  - home-namespace.yaml
   - home-assistant.yaml
   - lidarr.yaml
   - pihole.yaml
