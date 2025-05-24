@@ -1,7 +1,9 @@
 resources:
-  - home-namespace.yaml
   - home-assistant.yaml
+  - home-namespace.yaml
   - lidarr.yaml
+  - media-namespace.yaml
+  - network-namespace.yaml
   - pihole.yaml
   - prowlarr.yaml
   - radarr.yaml
