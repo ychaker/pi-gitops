@@ -42,18 +42,15 @@ repo-root/
         lidarr.yaml
         prowlarr.yaml
         pihole.yaml
-      monitoring/           # Prometheus, Grafana
-        prometheus.yaml
-        grafana.yaml
-      networking/           # Traefik Ingress
-        traefik.yaml
-      storage/              # NFS/SMB PVs/PVCs
-        nfs-pv.yaml
-        nfs-pvc.yaml
-  infrastructure/
-    ingress/                # (optional: extra ingress config)
-    monitoring/             # (optional: extra monitoring config)
-    storage/                # (optional: extra storage classes)
+      infrastructure
+         monitoring/           # Prometheus, Grafana
+           prometheus.yaml
+           grafana.yaml
+         networking/           # Traefik Ingress
+           traefik.yaml
+         storage/              # NFS/SMB PVs/PVCs
+           nfs-pv.yaml
+           nfs-pvc.yaml
   README.md
 ```
 

@@ -1,6 +1,6 @@
 resources:
-  - ./flux-system
-  - ./apps
-  - ./infrastructure/ingress
-  - ./infrastructure/monitoring
-  - ./infrastructure/storage
+  - flux-system
+  - apps
+  - infrastructure/ingress
+  - infrastructure/monitoring
+  - infrastructure/storage
