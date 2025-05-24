@@ -1,8 +1,11 @@
 resources:
   - ./flux-system
-  - ./apps/home-assistant
-  - ./apps/prometheus
-  - ./apps/ubiquity-unifi-agent
-  - ../../infrastructure/ingress
-  - ../../infrastructure/monitoring
-  - ../../infrastructure/storage
+  - ./apps/home-assistant.yaml
+  - ./apps/lidarr.yaml
+  - ./apps/pihole.yaml
+  - ./apps/prowlarr.yaml
+  - ./apps/radarr.yaml
+  - ./apps/unifi.yaml
+  - ./infrastructure/ingress
+  - ./infrastructure/monitoring
+  - ./infrastructure/storage

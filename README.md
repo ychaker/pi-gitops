@@ -227,6 +227,7 @@ Bootstrap Flux, targeting this repo:
 
 ```sh
 flux bootstrap github \
+  --token-auth \
   --owner=ychaker \
   --repository=pi-gitops \
   --branch=main \
