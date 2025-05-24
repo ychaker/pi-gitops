@@ -1,11 +1,6 @@
 resources:
   - ./flux-system
-  - ./apps/home-assistant.yaml
-  - ./apps/lidarr.yaml
-  - ./apps/pihole.yaml
-  - ./apps/prowlarr.yaml
-  - ./apps/radarr.yaml
-  - ./apps/unifi.yaml
+  - ./apps
   - ./infrastructure/ingress
   - ./infrastructure/monitoring
   - ./infrastructure/storage
