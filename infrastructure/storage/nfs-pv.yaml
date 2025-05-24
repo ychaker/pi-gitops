@@ -1,0 +1,15 @@
+# NFS PersistentVolume for NAS storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    # Set to your NAS IP and export path
+    server: 192.168.1.158
+    path: /volume1/k8s-share
+  persistentVolumeReclaimPolicy: Retain

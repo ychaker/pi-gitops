@@ -1,0 +1,13 @@
+# NFS PersistentVolumeClaim for cluster-wide use
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  volumeName: nfs-pv

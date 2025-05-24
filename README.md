@@ -1,68 +1,219 @@
-# Home Kubernetes Cluster with GitOps
+# Home Raspberry Pi Kubernetes Cluster (GitOps)
 
-This repository is designed to set up and manage a Kubernetes cluster on a Raspberry Pi cluster using GitOps (Flux). The cluster includes the following tools and applications:
+This repository manages a Kubernetes (k3s) cluster running on 6 Raspberry Pis using GitOps practices. The setup automates provisioning, application deployment, and monitoring with Ansible, Flux, and Helm. Storage is provided by your Synology NAS (NFS/SMB).
 
-- **k3s** (Lightweight Kubernetes)
-- **Prometheus** (Monitoring)
-- **Flux** (GitOps tool)
-- **Traefik** (Ingress controller)
-- **Home Assistant** (Home automation)
-- **Ubiquity Unifi Agent** (Network management)
-- **NFS Storage** (Using a home NAS system)
+## Features
 
-## Repository Structure
+- **Automated provisioning** with Ansible
+- **k3s**: Lightweight Kubernetes for ARM (Raspberry Pi)
+- **Flux**: GitOps controller for repeatable, declarative app deployments
+- **Traefik**: Ingress controller
+- **Prometheus & Grafana**: Monitoring & dashboards
+- **Persistent storage**: Synology NAS (NFS/SMB)
+- **App stack**: Home Assistant, Unifi, Radarr, Lidarr, Prowlarr, Pi-hole, and more
+
+---
+
+## Hardware & Network Prerequisites
+
+- 6x Raspberry Pi (recommend 2GB+ RAM, RPi 4 if possible)
+- MicroSD card or SSD for each Pi
+- Wired Ethernet (recommended)
+- Synology NAS with NFS or SMB share enabled
+- All devices on the same subnet, static IPs preferred
+
+---
+
+## Repo Structure
 
 ```
 repo-root/
-├── clusters/
-│   └── home-cluster/
-│       ├── flux-system/       # Flux configuration files
-│       ├── kustomization.yaml # Links to other components
-│       └── apps/
-│           ├── home-assistant/
-│           ├── prometheus/
-│           └── ubiquity-unifi-agent/
-├── infrastructure/
-│   ├── ingress/               # Traefik configuration
-│   ├── monitoring/            # Prometheus configuration
-│   ├── storage/               # NFS storage configuration
-├── ansible/                   # Ansible playbooks for k3s installation
-└── README.md
+  ansible/                  # Ansible playbooks for provisioning
+    install_k3s.yml
+    inventory.ini
+  clusters/
+    home-cluster/           # Flux/Kustomize root
+      kustomization.yaml
+      flux-system/          # Flux configuration
+      apps/                 # App manifests (HelmRelease/YAML)
+        home-assistant.yaml
+        unifi.yaml
+        radarr.yaml
+        lidarr.yaml
+        prowlarr.yaml
+        pihole.yaml
+      monitoring/           # Prometheus, Grafana
+        prometheus.yaml
+        grafana.yaml
+      networking/           # Traefik Ingress
+        traefik.yaml
+      storage/              # NFS/SMB PVs/PVCs
+        nfs-pv.yaml
+        nfs-pvc.yaml
+  infrastructure/
+    ingress/                # (optional: extra ingress config)
+    monitoring/             # (optional: extra monitoring config)
+    storage/                # (optional: extra storage classes)
+  README.md
 ```
 
-## Prerequisites
+---
 
-1. **k3s**: Install k3s on your Raspberry Pi cluster.
-2. **Home NAS**: Ensure your NAS is configured with an NFS share.
+## Setup Instructions
 
-## Installing Flux
+### 1. Prepare Raspberry Pis
 
-Flux is a GitOps tool used to automate the deployment of resources to your Kubernetes cluster by syncing with this Git repository.
+#### Flash Raspberry Pi OS Lite
 
-### Step 1: Install Flux CLI
+- Download Raspberry Pi Imager or use [Raspberry Pi OS Lite (64-bit)](https://www.raspberrypi.com/software/).
+- Flash the SD card or SSD for each Pi.
 
-Install the Flux CLI on your local machine:
+#### Boot, Set Unique Hostnames, Enable SSH
 
-For Linux/macOS:
-```bash
-curl -s https://fluxcd.io/install.sh | sudo bash
+1. **Insert the SD card and boot each Raspberry Pi.**
+2. **Enable SSH:**
+   - Create an empty file named `ssh` (no extension) in the boot partition of the SD card before first boot, or run:
+     ```sh
+     sudo systemctl enable ssh
+     sudo systemctl start ssh
+     ```
+3. **Set a unique hostname:**
+   - SSH into each Pi (default user: `pi`, default password: `raspberry`):
+     ```sh
+     ssh pi@raspberrypi.local
+     ```
+   - Change the hostname (replace `pi1` with your chosen hostname):
+     ```sh
+     sudo raspi-config
+     # Choose: System Options > Hostname > set as pi1, pi2, etc.
+     ```
+     Or edit `/etc/hostname` and `/etc/hosts` manually:
+     ```sh
+     sudo nano /etc/hostname
+     sudo nano /etc/hosts
+     ```
+     - Replace the existing name with `pi1`, `pi2`, etc. in both files.
+   - Reboot:
+     ```sh
+     sudo reboot
+     ```
+
+#### Set Static IPs
+
+You can set static IPs via your router (DHCP reservation, recommended) or on each Pi:
+
+- **Using dhcpcd.conf (on the Pi):**
+  ```sh
+  sudo nano /etc/dhcpcd.conf
+  ```
+
+  Add at the end (replace with your network details and static IP for each Pi):
+
+  ```
+  interface eth0
+    static ip_address=192.168.1.71/24
+    static routers=192.168.1.1
+    static domain_name_servers=192.168.1.1 8.8.8.8
+  ```
+  - Save and reboot the Pi.
+
+##### Print Your Gateway and DNS (Helper Script)
+
+A helper script `get_network_info.sh` is provided to print your current default gateway and DNS server(s).
+
+**Usage:**
+1. Download or copy `get_network_info.sh` to your laptop (macOS or Linux).
+2. Make it executable and run it:
+   ```sh
+   chmod +x get_network_info.sh
+   ./get_network_info.sh
+   ```
+3. Use the printed values as input for `setup_pi.sh` when configuring your Raspberry Pis.
+
+**Example Output:**
+
+```
+=== Default Gateway (Router) ===
+Gateway: 192.168.1.1
+
+=== DNS Servers ===
+DNS: 192.168.1.1
+DNS: 8.8.8.8
+
+Copy and paste these values when prompted by setup_pi.sh!
 ```
 
-For Windows (using Chocolatey):
-```bash
-choco install flux
+#### Update System and Enable SSH Key Authentication
+
+- Update and upgrade the OS:
+  ```sh
+  sudo apt update && sudo apt upgrade -y
+  ```
+- Copy your SSH public key to each Pi (from your workstation):
+  ```sh
+  ssh-copy-id pi@<pi-ip>
+  ```
+
+#### Automated Initial Setup (Optional)
+
+You can use the provided `setup_pi.sh` script to automate initial Pi configuration (hostname, static IP, SSH, updates).
+
+**Usage:**
+1. Copy `setup_pi.sh` to the Pi (via SCP or USB).
+2. Run:
+   ```sh
+   chmod +x setup_pi.sh
+   sudo ./setup_pi.sh
+   ```
+3. Follow the prompts.
+
+**After the Pi reboots, from your laptop:**
+
+```sh
+ssh-copy-id pi@<pi-ip>
 ```
 
-Verify the installation:
-```bash
-flux --version
+This will enable passwordless SSH login for Ansible and cluster setup.
+
+### 2. Configure Ansible
+
+Edit `ansible/inventory.ini` with Pi hostnames/IPs.
+
+```ini
+[pis]
+pi1 ansible_host=192.168.1.71
+pi2 ansible_host=192.168.1.72
+pi3 ansible_host=192.168.1.73
+pi4 ansible_host=192.168.1.74
+pi5 ansible_host=192.168.1.75
+pi6 ansible_host=192.168.1.76
 ```
 
-### Step 2: Bootstrap Flux
+### 3. Provision the cluster
 
-Use the Flux CLI to bootstrap the GitOps system. Replace `<github-username>` with your GitHub username:
+On your workstation, install Ansible:
 
-```bash
+```sh
+brew install ansible
+```
+
+Run the playbook to install k3s and dependencies on all Pis:
+
+```sh
+ansible-playbook -i ansible/inventory.ini ansible/install_k3s.yml
+```
+
+### 4. Bootstrap Flux
+
+Install Flux CLI ([docs](https://fluxcd.io/docs/installation/)):
+
+```sh
+brew install fluxcd/tap/flux
+```
+
+Bootstrap Flux, targeting this repo:
+
+```sh
 flux bootstrap github \
   --owner=ychaker \
   --repository=pi-gitops \
@@ -70,53 +221,61 @@ flux bootstrap github \
   --path=clusters/home-cluster
 ```
 
-This step sets up Flux in your cluster and links it to this repository.
+Flux will now reconcile everything under `clusters/home-cluster/`.
 
-## Installing k3s on Raspberry Pi Nodes
+### 5. Configure Storage
 
-k3s must be installed on your Raspberry Pi cluster before using GitOps. You can automate this using the Ansible playbooks in this repository.
+On your Synology NAS:
+- Create an NFS (or SMB) share for persistent data.
+- Note: Allow access from all Pi IPs.
 
-### Step 1: Install Ansible
+Edit `clusters/home-cluster/storage/nfs-pv.yaml` and `nfs-pvc.yaml` with your NAS IP/export details.
 
-Install Ansible on your local machine:
-```bash
-sudo apt update
-sudo apt install ansible -y
+Apply storage resources:
+
+```sh
+kubectl apply -k clusters/home-cluster/storage
 ```
 
-### Step 2: Update the Inventory File
+### 6. Deploy Applications
 
-Edit the `ansible/inventory.ini` file to include the IP addresses and SSH credentials of your Raspberry Pi nodes.
-
-### Step 3: Run the Ansible Playbook
-
-Run the following command to install k3s on your Raspberry Pi nodes:
-```bash
-ansible-playbook -i ansible/inventory.ini ansible/install_k3s.yml
-```
-
-## Getting Started
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/ychaker/pi-gitops.git
-   cd pi-gitops
-   ```
-
-2. Apply the manifests:
-   ```bash
-   kubectl apply -k clusters/home-cluster
-   ```
-
-3. Monitor the cluster:
-   ```bash
-   kubectl get pods --all-namespaces
-   ```
-
-## Storage Configuration
-
-The `infrastructure/storage/` directory contains configurations for setting up NFS storage using your home NAS.
+- Edit or add HelmRelease/YAML manifests to `clusters/home-cluster/apps/` for services you want.
+- Commit and push. Flux will deploy automatically.
 
 ---
 
-Happy hacking!
+## Usage Examples
+
+**Reboot all Pis:**
+```sh
+ansible -i ansible/inventory.ini pis -a "sudo reboot"
+```
+
+**Check cluster health:**
+```sh
+kubectl get nodes
+kubectl get pods -A
+```
+
+**Add a new app:**
+1. Create manifest (see `apps/` examples).
+2. Commit & push.
+3. Wait for Flux to sync.
+
+**View dashboards:**
+- See Traefik ingress for links to Prometheus/Grafana
+
+---
+
+## Disaster Recovery
+
+1. Flash new Pis/SDs as above.
+2. Run Ansible to provision.
+3. Bootstrap Flux.
+4. Storage and app state is restored from Git/NAS.
+
+---
+
+## License
+
+MIT
