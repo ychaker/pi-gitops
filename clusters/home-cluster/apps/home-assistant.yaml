@@ -14,15 +14,16 @@ spec:
         name: bjw-s
         namespace: flux-system
   values:
+    controllers:
+      main:
+        type: deployment
     image:
       repository: ghcr.io/home-assistant/home-assistant
       tag: 2024.5.5
-    deployment:
-      enabled: true
     service:
       main:
         enabled: true
-        controller: "deployment"
+        controller: main
         ports:
           http:
             port: 8123
