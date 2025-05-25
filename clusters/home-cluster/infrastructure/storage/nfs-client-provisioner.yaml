@@ -21,7 +21,7 @@ spec:
       server: 192.168.1.158
       path: /volume1/k8s-share
     storageClass:
-      create: true      # Let Helm create the StorageClass
+      create: true
       name: nfs-client
       defaultClass: true
       reclaimPolicy: Retain

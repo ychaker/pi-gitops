@@ -1,0 +1,50 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: csidrivers.storage.k8s.io
+  annotations:
+    api-approved.kubernetes.io: "https://github.com/kubernetes/enhancements/pull/1111"
+spec:
+  group: storage.k8s.io
+  names:
+    kind: CSIDriver
+    listKind: CSIDriverList
+    plural: csidrivers
+    singular: csidriver
+  scope: Cluster
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              attachRequired:
+                type: boolean
+              podInfoOnMount:
+                type: boolean
+              volumeLifecycleModes:
+                type: array
+                items:
+                  type: string
+              storageCapacity:
+                type: boolean
+              fsGroupPolicy:
+                type: string
+              tokenRequests:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    audience:
+                      type: string
+                    expirationSeconds:
+                      type: integer
+              requiresRepublish:
+                type: boolean
+              seLinuxMount:
+                type: boolean
