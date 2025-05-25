@@ -1,9 +1,10 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: lidarr
   namespace: media
 spec:
+  interval: 5m
   chart:
     spec:
       chart: app-template
@@ -12,7 +13,6 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-  interval: 5m
   values:
     image:
       repository: ghcr.io/linuxserver/lidarr
