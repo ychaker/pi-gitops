@@ -1,4 +1,4 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: prowlarr
@@ -7,18 +7,24 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: prowlarr
-      version: "4.5.2"
+      chart: app-template
+      version: 2.7.0
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home
+        name: bjw-s
         namespace: flux-system
   values:
+    image:
+      repository: ghcr.io/linuxserver/prowlarr
+      tag: 1.16.2.4541-ls83
     persistence:
-      existingClaim: nfs-pvc
+      config:
+        enabled: true
+        existingClaim: nfs-pvc
     ingress:
-      enabled: true
-      hosts:
-        - host: "prowlarr.local"
-          paths:
-            - /
+      main:
+        enabled: true
+        hosts:
+          - host: prowlarr.local
+            paths:
+              - path: /

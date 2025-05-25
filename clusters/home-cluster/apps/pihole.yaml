@@ -1,4 +1,4 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: pihole
@@ -7,20 +7,24 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: pihole
-      version: "2.31.0"
+      chart: app-template
+      version: 2.7.0
       sourceRef:
         kind: HelmRepository
-        name: mojo2600
+        name: bjw-s
         namespace: flux-system
   values:
-    serviceWeb:
-      type: ClusterIP
+    image:
+      repository: pihole/pihole
+      tag: 2024.05.0
     persistence:
-      existingClaim: nfs-pvc
+      config:
+        enabled: true
+        existingClaim: nfs-pvc
     ingress:
-      enabled: true
-      hosts:
-        - host: "pihole.local"
-          paths:
-            - /
+      main:
+        enabled: true
+        hosts:
+          - host: pihole.local
+            paths:
+              - path: /
