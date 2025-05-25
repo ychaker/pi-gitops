@@ -264,11 +264,13 @@ kubectl get helmreleases --all-namespaces
 ## Usage Examples
 
 **Reboot all Pis:**
+
 ```sh
 ansible -i ansible/inventory.ini pis -a "sudo reboot"
 ```
 
 **Check cluster health:**
+
 ```sh
 kubectl get nodes
 kubectl get pods -A
@@ -281,6 +283,12 @@ kubectl get pods -A
 
 **View dashboards:**
 - See Traefik ingress for links to Prometheus/Grafana
+
+**Force apply:**
+
+```sh
+find clusters/home-cluster/apps/ -type f -name '*.yaml' ! -name 'kustomization.yaml' -print0 | xargs -0 -n 1 kubectl apply -f
+```
 
 ---
 
