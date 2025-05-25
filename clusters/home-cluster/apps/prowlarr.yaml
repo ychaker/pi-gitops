@@ -17,6 +17,13 @@ spec:
     image:
       repository: ghcr.io/linuxserver/prowlarr
       tag: 1.16.2.4541-ls83
+    service:
+      main:
+        enabled: true
+        ports:
+          http:
+            port: 9696
+        name: prowlarr
     persistence:
       config:
         enabled: true

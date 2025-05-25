@@ -17,6 +17,13 @@ spec:
     image:
       repository: jacobalberty/unifi
       tag: v8.1.127
+    service:
+      main:
+        enabled: true
+        ports:
+          http:
+            port: 8443
+        name: unifi
     persistence:
       config:
         enabled: true
