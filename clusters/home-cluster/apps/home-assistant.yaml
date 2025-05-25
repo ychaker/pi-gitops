@@ -17,9 +17,11 @@ spec:
     controllers:
       main:
         type: deployment
-    image:
-      repository: ghcr.io/home-assistant/home-assistant
-      tag: 2024.5.5
+        containers:
+          main:
+            image:
+              repository: ghcr.io/home-assistant/home-assistant
+              tag: 2024.5.5
     service:
       main:
         enabled: true
