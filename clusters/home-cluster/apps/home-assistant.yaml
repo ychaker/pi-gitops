@@ -17,9 +17,12 @@ spec:
     image:
       repository: ghcr.io/home-assistant/home-assistant
       tag: 2024.5.5
+    deployment:
+      enabled: true
     service:
       main:
         enabled: true
+        controller: "deployment"
         ports:
           http:
             port: 8123
@@ -34,4 +37,3 @@ spec:
           - host: homeassistant.local
             paths:
               - path: /
-        servicePort: http
