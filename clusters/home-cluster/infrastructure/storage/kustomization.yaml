@@ -1,3 +1,6 @@
 resources:
-  - nfs-pv.yaml
-  - nfs-pvc.yaml
+  - nfs-client-provisioner.yaml
+  - nfs-client-storageclass.yaml
+  - nfs-pvc-home.yaml
+  - nfs-pvc-media.yaml
+  - nfs-pvc-network.yaml

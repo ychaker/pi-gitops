@@ -33,3 +33,13 @@ metadata:
   namespace: flux-system
 spec:
   url: https://traefik.github.io/charts
+
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: nfs-subdir-external-provisioner
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
