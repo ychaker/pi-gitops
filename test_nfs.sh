@@ -7,7 +7,7 @@
 #   sudo ./test_nfs.sh
 #
 # OR:
-#   curl -O https://raw.githubusercontent.com/ychaker/pi-gitops/main/setup_pi.sh | bash
+#   curl https://raw.githubusercontent.com/ychaker/pi-gitops/main/test_nfs.sh | bash
 #
 # Run this script directly on the Pi you wish to configure (preferably after first boot).
 
