@@ -23,7 +23,6 @@ spec:
         ports:
           http:
             port: 7878
-        name: radarr
     persistence:
       config:
         enabled: true
@@ -35,3 +34,4 @@ spec:
           - host: radarr.local
             paths:
               - path: /
+        servicePort: http

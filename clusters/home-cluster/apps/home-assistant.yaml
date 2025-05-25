@@ -23,7 +23,6 @@ spec:
         ports:
           http:
             port: 8123
-        name: home-assistant
     persistence:
       config:
         enabled: true
@@ -35,3 +34,4 @@ spec:
           - host: homeassistant.local
             paths:
               - path: /
+        servicePort: http

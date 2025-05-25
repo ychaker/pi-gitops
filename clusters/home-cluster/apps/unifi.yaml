@@ -23,7 +23,6 @@ spec:
         ports:
           http:
             port: 8443
-        name: unifi
     persistence:
       config:
         enabled: true
@@ -35,3 +34,4 @@ spec:
           - host: unifi.local
             paths:
               - path: /
+        servicePort: http

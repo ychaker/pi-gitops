@@ -23,7 +23,6 @@ spec:
         ports:
           http:
             port: 8686
-        name: lidarr
     persistence:
       config:
         enabled: true
@@ -35,3 +34,4 @@ spec:
           - host: lidarr.local
             paths:
               - path: /
+        servicePort: http

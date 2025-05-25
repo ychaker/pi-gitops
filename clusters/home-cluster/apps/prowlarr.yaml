@@ -23,7 +23,6 @@ spec:
         ports:
           http:
             port: 9696
-        name: prowlarr
     persistence:
       config:
         enabled: true
@@ -35,3 +34,4 @@ spec:
           - host: prowlarr.local
             paths:
               - path: /
+        servicePort: http
