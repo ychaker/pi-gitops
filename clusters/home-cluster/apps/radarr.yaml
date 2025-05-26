@@ -21,7 +21,7 @@ spec:
           main:
             image:
               repository: ghcr.io/linuxserver/radarr
-              tag: 5.6.0.8843-ls188
+              tag: latest
     service:
       main:
         enabled: true

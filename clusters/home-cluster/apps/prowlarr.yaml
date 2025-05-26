@@ -21,7 +21,7 @@ spec:
           main:
             image:
               repository: ghcr.io/linuxserver/prowlarr
-              tag: 1.16.2.4541-ls83
+              tag: latest
     service:
       main:
         enabled: true
