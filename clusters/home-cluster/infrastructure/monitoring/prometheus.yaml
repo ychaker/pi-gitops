@@ -33,6 +33,11 @@ spec:
         size: 2Gi
       initChownData:
         enabled: false
+      sidecar:
+        dashboards:
+          enabled: true
+          initChownData:
+            enabled: false
       ingress:
         enabled: true
         hosts:
