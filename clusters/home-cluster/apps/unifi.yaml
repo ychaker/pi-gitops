@@ -21,7 +21,7 @@ spec:
           main:
             image:
               repository: jacobalberty/unifi
-              tag: v8.1.127
+              tag: latest
     service:
       main:
         enabled: true
