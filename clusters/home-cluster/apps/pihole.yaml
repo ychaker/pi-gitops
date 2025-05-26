@@ -14,9 +14,14 @@ spec:
         name: bjw-s
         namespace: flux-system
   values:
-    image:
-      repository: pihole/pihole
-      tag: 2024.05.0
+    controllers:
+      main:
+        type: deployment
+        containers:
+          main:
+            image:
+              repository: pihole/pihole
+              tag: 2024.05.0
     service:
       main:
         enabled: true

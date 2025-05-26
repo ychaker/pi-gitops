@@ -178,6 +178,12 @@ ssh-copy-id pi@<pi-ip>
 
 This will enable passwordless SSH login for Ansible and cluster setup.
 
+Or use the script:
+
+```sh
+./config_k3s.sh
+```
+
 ### 2. Configure Ansible
 
 Edit `ansible/inventory.ini` with Pi hostnames/IPs.

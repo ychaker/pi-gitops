@@ -1,0 +1,53 @@
+---
+# -----------------------------------------------------------------------------
+# uninstall_k3s.yml
+#
+# Uninstalls k3s from all Raspberry Pis (both server and agents).
+# Checks for the uninstall scripts before running them to avoid errors.
+#
+# Usage:
+#   ansible-playbook -i ansible/inventory.ini ansible/uninstall_k3s.yml
+# -----------------------------------------------------------------------------
+
+- name: Uninstall k3s (server or agent) on all Pis
+  hosts: pis
+  become: true
+  tasks:
+    # Check if k3s server uninstall script exists
+    - name: Check if k3s server uninstall script exists
+      stat:
+        path: /usr/local/bin/k3s-uninstall.sh
+      register: ansible_stat_server
+
+    # Check if k3s agent uninstall script exists
+    - name: Check if k3s agent uninstall script exists
+      stat:
+        path: /usr/local/bin/k3s-agent-uninstall.sh
+      register: ansible_stat_agent
+
+    # Run k3s server uninstall script if present
+    - name: Uninstall k3s server if present
+      shell: /usr/local/bin/k3s-uninstall.sh
+      # Only run if script exists
+      when: ansible_stat_server.stat.exists
+      ignore_errors: true
+
+    # Run k3s agent uninstall script if present
+    - name: Uninstall k3s agent if present
+      shell: /usr/local/bin/k3s-agent-uninstall.sh
+      # Only run if script exists
+      when: ansible_stat_agent.stat.exists
+      ignore_errors: true
+
+# -----------------------------------------------------------------------------
+# Optionally, reboot Pis after uninstall for a clean slate
+# -----------------------------------------------------------------------------
+- name: Reboot Pis after uninstall (optional)
+  hosts: pis
+  become: true
+  tasks:
+    - name: Reboot Pi after uninstall
+      reboot:
+        msg: "Rebooting Pi after uninstalling k3s"
+        pre_reboot_delay: 5
+        reboot_timeout: 300
