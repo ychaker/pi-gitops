@@ -31,7 +31,8 @@ spec:
         enabled: true
         storageClassName: nfs-client
         size: 2Gi
-      initChownData: false
+      initChownData:
+        enabled: false
       ingress:
         enabled: true
         hosts:
