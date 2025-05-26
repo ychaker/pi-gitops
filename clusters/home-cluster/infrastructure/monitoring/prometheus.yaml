@@ -26,19 +26,4 @@ spec:
                 requests:
                   storage: 8Gi
     grafana:
-      enabled: true
-      persistence:
-        enabled: true
-        storageClassName: nfs-client
-        size: 2Gi
-      initChownData:
-        enabled: false
-      sidecar:
-        dashboards:
-          enabled: true
-          initChownData:
-            enabled: false
-      ingress:
-        enabled: true
-        hosts:
-          - grafana.local
+      enabled: false

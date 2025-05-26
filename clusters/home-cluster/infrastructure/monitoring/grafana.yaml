@@ -1,0 +1,29 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: grafana
+      version: '7.3.9' # Use a recent version, check https://github.com/grafana/helm-charts/releases
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+  values:
+    persistence:
+      enabled: true
+      storageClassName: nfs-client
+      size: 2Gi
+      accessModes: ["ReadWriteOnce"]
+    initChownData:
+      enabled: false
+    ingress:
+      enabled: true
+      hosts:
+        - grafana.local
+    adminUser: admin
+    adminPassword: changeme # Use a secret in production!
