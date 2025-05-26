@@ -39,4 +39,3 @@ spec:
           - host: unifi.local
             paths:
               - path: /
-        servicePort: http
