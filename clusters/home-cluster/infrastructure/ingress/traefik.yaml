@@ -16,7 +16,10 @@ spec:
         namespace: flux-system
   values:
     additionalArguments:
-      - "--api.insecure=true" # for dashboard (disable in prod!)
+      # Enable the insecure dashboard for easy access (disable in prod!)
+      - "--api.insecure=true"
+      # Explicitly enable the dashboard; required for visibility via /dashboard and /api
+      - "--api.dashboard=true"
     ingressRoute:
       dashboard:
         enabled: true
