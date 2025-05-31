@@ -22,6 +22,11 @@ spec:
             image:
               repository: pihole/pihole
               tag: 2024.05.0
+            env:
+              - name: VIRTUAL_HOST
+                value: pihole.local
+              - name: WEBPASSWORD
+                value: "" # disables password
     service:
       main:
         enabled: true

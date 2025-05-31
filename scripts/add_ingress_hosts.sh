@@ -10,9 +10,10 @@ INGRESS_IP="192.168.1.71"
 SERVICES=(
   "homeassistant.local"
   "lidarr.local"
-  "radarr.local"
-  "prowlarr.local"
   "pihole.local"
+  "prowlarr.local"
+  "radarr.local"
+  "traefik.local"
   "unifi.local"
 )
 
