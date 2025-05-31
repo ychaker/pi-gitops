@@ -26,8 +26,12 @@ spec:
       main:
         enabled: true
         ports:
-          http:
+          # Expose HTTPS port for the controller UI
+          https:
+            enabled: true
             port: 8443
+            protocol: TCP
+            targetPort: 8443
     persistence:
       config:
         enabled: true
@@ -35,7 +39,12 @@ spec:
     ingress:
       main:
         enabled: true
+        # Host definition for Ingress
         hosts:
           - host: unifi.local
             paths:
               - path: /
+        # Enable TLS for HTTPS passthrough (Traefik will terminate TLS or passthrough if configured)
+        tls:
+          - hosts:
+              - unifi.local
