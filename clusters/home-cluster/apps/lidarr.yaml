@@ -31,10 +31,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: nfs-pvc
-      globalMounts:
-        - path: /config
-          subPath: lidarr
+        existingClaim: nfs-pvc-lidarr
     ingress:
       main:
         enabled: true

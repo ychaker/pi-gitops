@@ -1,5 +1,8 @@
 resources:
   - nfs-client-provisioner.yaml
   - nfs-pvc-home.yaml
+  - nfs-pvc-lidarr.yaml
   - nfs-pvc-media.yaml
   - nfs-pvc-network.yaml
+  - nfs-pvc-prowlarr.yaml
+  - nfs-pvc-radarr.yaml

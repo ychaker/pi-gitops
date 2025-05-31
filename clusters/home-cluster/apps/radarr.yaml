@@ -32,9 +32,7 @@ spec:
       config:
         enabled: true
         existingClaim: nfs-pvc
-      globalMounts:
-        - path: /config
-          subPath: radarr
+        subPath: radarr
     ingress:
       main:
         enabled: true
