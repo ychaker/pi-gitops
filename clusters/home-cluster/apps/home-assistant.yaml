@@ -40,3 +40,6 @@ spec:
           - host: homeassistant.local
             paths:
               - path: /
+    env:
+      - name: SERVER_HOSTNAME
+        value: "homeassistant.local"

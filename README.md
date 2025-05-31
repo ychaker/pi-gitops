@@ -116,10 +116,10 @@ You can set static IPs via your router (DHCP reservation, recommended) or on eac
 
 ##### Print Your Gateway and DNS (Helper Script)
 
-A helper script `get_network_info.sh` is provided to print your current default gateway and DNS server(s).
+A helper script `scripts/get_network_info.sh` is provided to print your current default gateway and DNS server(s).
 
 **Usage:**
-1. Download or copy `get_network_info.sh` to your laptop (macOS or Linux).
+1. Download or copy `scripts/get_network_info.sh` to your laptop (macOS or Linux).
 2. Make it executable and run it:
    ```sh
    chmod +x get_network_info.sh
@@ -161,7 +161,7 @@ You can use the provided `setup_pi.sh` script to automate initial Pi configurati
    ```sh
    mkdir -p cluster
    cd cluster
-   curl -O https://raw.githubusercontent.com/ychaker/pi-gitops/main/setup_pi.sh
+   curl -O https://raw.githubusercontent.com/ychaker/pi-gitops/main/scripts/setup_pi.sh
    ```
 2. Run:
    ```sh
@@ -181,7 +181,7 @@ This will enable passwordless SSH login for Ansible and cluster setup.
 Or use the script:
 
 ```sh
-./config_k3s.sh
+./scripts/config_k3s.sh
 ```
 
 ### 2. Configure Ansible
