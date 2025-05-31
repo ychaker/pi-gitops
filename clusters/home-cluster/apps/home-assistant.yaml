@@ -22,6 +22,12 @@ spec:
             image:
               repository: ghcr.io/home-assistant/home-assistant
               tag: 2024.5.5
+            # Add environment variables to trust Traefik as a reverse proxy
+            env:
+              - name: HASS_HTTP_TRUSTED_PROXIES
+                value: "0.0.0.0/0"
+              - name: HASS_HTTP_USE_X_FORWARDED_FOR
+                value: "true"
     service:
       main:
         enabled: true
@@ -40,6 +46,3 @@ spec:
           - host: homeassistant.local
             paths:
               - path: /
-    env:
-      - name: SERVER_HOSTNAME
-        value: "homeassistant.local"
