@@ -1,4 +1,4 @@
 resources:
   - kube-system-namespace.yaml
-  - traefik-dashbord-ingressroute.yaml
+  - traefik-dashbord-ingress.yaml
   - traefik.yaml
