@@ -32,6 +32,7 @@ spec:
       config:
         enabled: true
         existingClaim: nfs-pvc
+        subPath: lidarr
     ingress:
       main:
         enabled: true
