@@ -22,11 +22,11 @@ spec:
             image:
               repository: jacobalberty/unifi
               tag: latest
+    # Service must expose only HTTPS (8443) for the Unifi UI
     service:
       main:
         enabled: true
         ports:
-          # Expose HTTPS port for the controller UI
           https:
             enabled: true
             port: 8443
@@ -39,12 +39,21 @@ spec:
     ingress:
       main:
         enabled: true
-        # Host definition for Ingress
+        annotations:
+          # Use Traefik ingress controller
+          kubernetes.io/ingress.class: traefik
+          # Enable TLS passthrough so that HTTPS goes all the way to the Unifi pod
+          traefik.ingress.kubernetes.io/router.tls.passthrough: "true"
         hosts:
           - host: unifi.local
             paths:
               - path: /
-        # Enable TLS for HTTPS passthrough (Traefik will terminate TLS or passthrough if configured)
+                pathType: Prefix
         tls:
           - hosts:
               - unifi.local
+        # Optionally, specify secretName for a custom certificate:
+        # tls:
+        #   - hosts:
+        #       - unifi.local
+        #     secretName: unifi-tls
