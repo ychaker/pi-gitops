@@ -31,10 +31,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: nfs-pvc
-      globalMounts:
-        - path: /config
-          subPath: prowlarr
+        existingClaim: nfs-pvc-prowlarr
     ingress:
       main:
         enabled: true

@@ -31,8 +31,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: nfs-pvc
-        subPath: radarr
+        existingClaim: nfs-pvc-radarr
     ingress:
       main:
         enabled: true
