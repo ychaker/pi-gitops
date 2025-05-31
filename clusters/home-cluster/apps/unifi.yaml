@@ -36,24 +36,3 @@ spec:
       config:
         enabled: true
         existingClaim: nfs-pvc
-    ingress:
-      main:
-        enabled: true
-        annotations:
-          # Use Traefik ingress controller
-          kubernetes.io/ingress.class: traefik
-          # Enable TLS passthrough so that HTTPS goes all the way to the Unifi pod
-          traefik.ingress.kubernetes.io/router.tls.passthrough: "true"
-        hosts:
-          - host: unifi.local
-            paths:
-              - path: /
-                pathType: Prefix
-        tls:
-          - hosts:
-              - unifi.local
-        # Optionally, specify secretName for a custom certificate:
-        # tls:
-        #   - hosts:
-        #       - unifi.local
-        #     secretName: unifi-tls

@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: unifi-tcp
+  namespace: network
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostSNI(`unifi.local`)
+      services:
+        - name: unifi
+          port: 8443
+          # Don't set tls here; passthrough is default for TCP
+  tls:
+    passthrough: true
