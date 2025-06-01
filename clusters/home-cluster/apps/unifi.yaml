@@ -22,17 +22,40 @@ spec:
             image:
               repository: jacobalberty/unifi
               tag: latest
-    # Service must expose only HTTPS (8443) for the Unifi UI
+    # Expose all required UniFi ports to enable device discovery, adoption, and UI access
     service:
       main:
         enabled: true
+        type: LoadBalancer  # Use LoadBalancer for LAN-wide access (or NodePort if preferred)
         ports:
-          https:
+          ui:
             enabled: true
-            port: 8443
+            port: 8443        # UniFi Controller Web UI (HTTPS)
             protocol: TCP
             targetPort: 8443
+          inform:
+            enabled: true
+            port: 8080        # Device adoption/inform
+            protocol: TCP
+            targetPort: 8080
+          stun:
+            enabled: true
+            port: 3478        # STUN
+            protocol: UDP
+            targetPort: 3478
+          discovery:
+            enabled: true
+            port: 10001       # Device discovery
+            protocol: UDP
+            targetPort: 10001
+          speedtest:
+            enabled: true
+            port: 6789        # Speed test (optional)
+            protocol: TCP
+            targetPort: 6789
     persistence:
       config:
         enabled: true
         existingClaim: nfs-pvc
+    # Remove the ingress section for TCP/UDP traffic, as device discovery/adoption does not use HTTP/S.
+    # UI will be available on 8443 (HTTPS) at the LoadBalancer IP or NodePort.
