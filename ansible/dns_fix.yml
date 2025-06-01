@@ -6,7 +6,14 @@
     desired_dns_servers:
       - 8.8.8.8
       - 1.1.1.1
+
   tasks:
+    # Gather installed package facts so we can check for NetworkManager
+    - name: Gather installed package facts
+      package_facts:
+        manager: auto
+
+    # Always update /etc/resolv.conf
     - name: Ensure resolv.conf uses desired DNS servers
       copy:
         dest: /etc/resolv.conf
@@ -17,6 +24,7 @@
           search localdomain
       notify: Restart network
 
+    # Only apply NetworkManager config if it is installed
     - name: Make DNS settings persistent with NetworkManager
       block:
         - name: Create NM config to ignore auto DNS
@@ -37,7 +45,7 @@
           service:
             name: NetworkManager
             state: restarted
-      when: "'NetworkManager' in ansible_facts.packages"
+      when: "'network-manager' in ansible_facts.packages"
 
   handlers:
     - name: Restart network

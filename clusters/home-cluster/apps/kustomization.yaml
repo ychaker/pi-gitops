@@ -7,5 +7,6 @@ resources:
   - pihole.yaml
   - prowlarr.yaml
   - radarr.yaml
+  - unifi-deployment.yaml
   - unifi-ingressroute.yaml
   - unifi.yaml

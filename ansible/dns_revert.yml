@@ -1,0 +1,51 @@
+---
+- name: Revert DNS configuration to use only gateway for all Kubernetes nodes
+  hosts: pis
+  become: yes
+  vars:
+    gateway_dns: 192.168.1.1
+
+  tasks:
+    # Gather package facts so we can check if network-manager is installed
+    - name: Gather installed package facts
+      package_facts:
+        manager: auto
+
+    # Restore /etc/resolv.conf to only use the gateway
+    - name: Restore /etc/resolv.conf to use only gateway
+      copy:
+        dest: /etc/resolv.conf
+        content: |
+          nameserver {{ gateway_dns }}
+          search localdomain
+      notify: Restart network
+
+    # Remove custom NetworkManager DNS config if present
+    - name: Remove custom NetworkManager DNS config
+      file:
+        path: /etc/NetworkManager/conf.d/dns.conf
+        state: absent
+
+    # Restore auto DNS handling for all NetworkManager connections
+    # Only run if network-manager is installed
+    - name: Restore auto DNS for all NetworkManager connections
+      shell: |
+        for con in $(nmcli -g NAME con); do
+          nmcli con mod "$con" ipv4.ignore-auto-dns no
+          nmcli con mod "$con" ipv4.dns ""
+        done
+      when: "'network-manager' in ansible_facts.packages"
+
+    # Restart NetworkManager to apply changes, only if installed
+    - name: Restart NetworkManager to apply changes
+      service:
+        name: NetworkManager
+        state: restarted
+      when: "'network-manager' in ansible_facts.packages"
+
+  handlers:
+    - name: Restart network
+      service:
+        name: networking
+        state: restarted
+      ignore_errors: yes
