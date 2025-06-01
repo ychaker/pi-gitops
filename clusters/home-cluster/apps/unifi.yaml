@@ -22,8 +22,8 @@ spec:
             image:
               repository: jacobalberty/unifi
               tag: latest
-        # Explicitly set DNS policy and config to ensure pod DNS works
-        dnsPolicy: ClusterFirst
+        # Custom DNS config to ensure pod DNS works
+        dnsPolicy: None
         dnsConfig:
           nameservers:
             - 8.8.8.8         # Google's DNS (fallback)
@@ -31,6 +31,8 @@ spec:
           options:
             - name: ndots
               value: "1"
+          searches:
+            - localdomain
     # Expose all necessary ports for UI, adoption, and device discovery
     service:
       main:
@@ -66,5 +68,3 @@ spec:
       config:
         enabled: true
         existingClaim: nfs-pvc
-# No ingress block - UniFi device adoption/discovery does NOT use HTTP/S Ingress.
-# UI is available via LoadBalancer IP(s) on port 8443.
