@@ -1,0 +1,47 @@
+---
+- name: Ensure DNS configuration is correct and persistent for all Kubernetes nodes
+  hosts: pis
+  become: yes
+  vars:
+    desired_dns_servers:
+      - 8.8.8.8
+      - 1.1.1.1
+  tasks:
+    - name: Ensure resolv.conf uses desired DNS servers
+      copy:
+        dest: /etc/resolv.conf
+        content: |
+          {% for ns in desired_dns_servers %}
+          nameserver {{ ns }}
+          {% endfor %}
+          search localdomain
+      notify: Restart network
+
+    - name: Make DNS settings persistent with NetworkManager
+      block:
+        - name: Create NM config to ignore auto DNS
+          copy:
+            dest: /etc/NetworkManager/conf.d/dns.conf
+            content: |
+              [main]
+              dns=default
+
+        - name: Set static DNS for all connections
+          shell: |
+            for con in $(nmcli -g NAME con); do
+              nmcli con mod "$con" ipv4.dns "{{ desired_dns_servers | join(' ') }}"
+              nmcli con mod "$con" ipv4.ignore-auto-dns yes
+            done
+
+        - name: Restart NetworkManager to apply changes
+          service:
+            name: NetworkManager
+            state: restarted
+      when: "'NetworkManager' in ansible_facts.packages"
+
+  handlers:
+    - name: Restart network
+      service:
+        name: networking
+        state: restarted
+      ignore_errors: yes
