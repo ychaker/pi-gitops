@@ -22,15 +22,15 @@ spec:
             image:
               repository: jacobalberty/unifi
               tag: latest
-    # Expose all required UniFi ports to enable device discovery, adoption, and UI access
+    # Expose all necessary ports for UI, adoption, and device discovery
     service:
       main:
         enabled: true
-        type: LoadBalancer  # Use LoadBalancer for LAN-wide access (or NodePort if preferred)
+        type: LoadBalancer  # Ensures pods are accessible from your LAN
         ports:
           ui:
             enabled: true
-            port: 8443        # UniFi Controller Web UI (HTTPS)
+            port: 8443        # Controller web UI (HTTPS)
             protocol: TCP
             targetPort: 8443
           inform:
@@ -40,12 +40,12 @@ spec:
             targetPort: 8080
           stun:
             enabled: true
-            port: 3478        # STUN
+            port: 3478        # STUN discovery
             protocol: UDP
             targetPort: 3478
           discovery:
             enabled: true
-            port: 10001       # Device discovery
+            port: 10001       # Layer 2 device discovery
             protocol: UDP
             targetPort: 10001
           speedtest:
@@ -57,5 +57,5 @@ spec:
       config:
         enabled: true
         existingClaim: nfs-pvc
-    # Remove the ingress section for TCP/UDP traffic, as device discovery/adoption does not use HTTP/S.
-    # UI will be available on 8443 (HTTPS) at the LoadBalancer IP or NodePort.
+# No ingress block - UniFi device adoption/discovery does NOT use HTTP/S Ingress.
+# UI is available via LoadBalancer IP(s) on port 8443.
